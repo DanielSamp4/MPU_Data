@@ -46,35 +46,35 @@ void setup() {
 
     mpu.setFilterIterations(20);
     // calibrate anytime you want to
-    // Serial.print("S,");
-    // // Serial.print(packet);
-    // Serial.print(time_now + millis());
-    // Serial.print(",");
-    // Serial.println(" Accel Gyro calibration will start in 5sec.");
-    // Serial.print("S,");
-    // // Serial.print(packet);
-    // Serial.print(time_now + millis());
-    // Serial.print(",");
-    // Serial.println("Please leave the device still on the flat plane.");
-    // mpu.verbose(true);
-    // delay(5000);
-    // mpu.calibrateAccelGyro();
+    Serial.print("S,");
+    // Serial.print(packet);
+    Serial.print(time_now + millis());
+    Serial.print(",");
+    Serial.println(" Accel Gyro calibration will start in 5sec.");
+    Serial.print("S,");
+    // Serial.print(packet);
+    Serial.print(time_now + millis());
+    Serial.print(",");
+    Serial.println("Please leave the device still on the flat plane.");
+    mpu.verbose(true);
+    delay(5000);
+    mpu.calibrateAccelGyro();
 
-    // Serial.print("S,");
-    // // Serial.print(packet);
-    // Serial.print(time_now + millis());
-    // Serial.print(",");
-    // Serial.println("Mag calibration will start in 5sec.");
-    // Serial.print("S,");
-    // // Serial.print(packet);
-    // Serial.print(time_now + millis());
-    // Serial.print(",");
-    // Serial.println(" Please Wave device in a figure eight until done.");
-    // delay(5000);
-    // mpu.calibrateMag();
-    // delay(1000);
-    // // print_calibration();
-    // mpu.verbose(false);
+    Serial.print("S,");
+    // Serial.print(packet);
+    Serial.print(time_now + millis());
+    Serial.print(",");
+    Serial.println("Mag calibration will start in 5sec.");
+    Serial.print("S,");
+    // Serial.print(packet);
+    Serial.print(time_now + millis());
+    Serial.print(",");
+    Serial.println(" Please Wave device in a figure eight until done.");
+    delay(5000);
+    mpu.calibrateMag();
+    delay(1000);
+    // print_calibration();
+    mpu.verbose(false);
     dataSemaphore = xSemaphoreCreateMutex();
     // tasks begin 
     xTaskCreatePinnedToCore(
@@ -232,7 +232,7 @@ void TaskSendData( void * pvParameters ) {
   Serial.println(xPortGetCoreID());
   for (;;) {
         unsigned long current_time = millis() - start_time;
-        if (xSemaphoreTake(dataSemaphore, pdMS_TO_TICKS(0)) ) {
+        if (xSemaphoreTake(dataSemaphore, 0) ) {
             // Acesso exclusivo aos dados do MPU-9250 aqui
             // Envie os dados via serial
 
@@ -240,7 +240,7 @@ void TaskSendData( void * pvParameters ) {
         if (micros() >= prev_ms + 3000) { // maximo de 3000 microsegundos o que equivale a 310Hz
             print_inertial_data();
             print_magnetometer_data();
-            print_roll_pitch_yaw();
+            // print_roll_pitch_yaw();
             // print_quaternions_data();
             // blink LED to indicate activity
             blinkState = !blinkState;
@@ -270,7 +270,7 @@ void TaskCollectData( void * pvParameters ) {
 
   for (;;) {
     
-    if (xSemaphoreTake(dataSemaphore, pdMS_TO_TICKS(0)) ) { //pdTRUE
+    if (xSemaphoreTake(dataSemaphore, 0) ) { //pdTRUEpdMS_TO_TICKS(0)
             // Acesso exclusivo aos dados do MPU-9250 aqui
             // Envie os dados via serial
 
