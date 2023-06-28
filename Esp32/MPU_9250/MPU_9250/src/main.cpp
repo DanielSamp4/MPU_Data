@@ -154,68 +154,7 @@ void print_inertial_data() {
     Serial.write(buffer, length);
 }
 
-// void print_roll_pitch_yaw() {
-//     Serial.print("A,");
-//     // Serial.print(packet);
-//     Serial.print(time_now + millis());
-//     Serial.print(",");
-//     Serial.print(mpu.getRoll(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getPitch(), 4);
-//     Serial.print(",");
-//     Serial.println(mpu.getYaw(), 4);
-// }
 
-// void print_quaternions_data() {
-//     Serial.print("Q,");
-//     // Serial.print(packet);
-//     Serial.print(time_now + millis());
-//     Serial.print(",");
-//     Serial.print(mpu.getQuaternionW(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getQuaternionX(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getQuaternionY(), 4);
-//     Serial.print(",");
-//     Serial.println(mpu.getQuaternionZ(), 4);
-// }
-// void print_magnetometer_data() {
-//     Serial.print("M,");
-//     // Serial.print(packet);
-//     Serial.print(time_now + millis());
-//     Serial.print(",");
-//     Serial.print(mpu.getMagX(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getMagY(), 4);
-//     Serial.print(",");
-//     Serial.println(mpu.getMagZ(), 4);
-// }
-// void print_inertial_data() {
-//     // SerialBT.print("AI,");
-//     Serial.print("I,");
-//     // Serial.print(packet);
-//     Serial.print(time_now + millis());
-//     Serial.print(",");
-//     // SerialBT.print(packet);
-//     // SerialBT.print(",");
-//     Serial.print(mpu.getGyroX(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getGyroY(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getGyroZ(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getAccX(), 4);
-//     Serial.print(",");
-//     Serial.print(mpu.getAccY(), 4);
-//     Serial.print(",");
-//     Serial.println(mpu.getAccZ(), 4);
-//     // SerialBT.print(",");
-//     // SerialBT.print(mpu.getMagX(), 4);
-//     // SerialBT.print(",");
-//     // SerialBT.print(mpu.getMagY(), 4);
-//     // SerialBT.print(",");
-//     // SerialBT.println(mpu.getMagZ(), 4);
-// }
 
 void print_calibration() {
   Serial.print("S,");
@@ -280,30 +219,30 @@ void TaskSendData( void * pvParameters ) {
   Serial.print("Task SendData running on core ");
   Serial.println(xPortGetCoreID());
   for (;;) {
-        unsigned long current_time = millis() - start_time;
+        // unsigned long current_time = millis() - start_time;
             // Acesso exclusivo aos dados do MPU-9250 aqui
             // Envie os dados via serial
-        if (micros() >= prev_ms + 1000) { // maximo de 3000 microsegundos o que equivale a 310Hz
+        if (micros() >= prev_ms + 15000) { // maximo de 3000 microsegundos o que equivale a 310Hz
 
             
             if (xSemaphoreTake(dataSemaphore, 0) ) {
                 print_inertial_data();
-                print_magnetometer_data();
+                // print_magnetometer_data();
                 // print_roll_pitch_yaw();
                 // print_quaternions_data();
                 // blink LED to indicate activity
-                blinkState = !blinkState;
-                digitalWrite(LED_PIN, blinkState);
+                // blinkState = !blinkState;
+                // digitalWrite(LED_PIN, blinkState);
                 prev_ms = micros();
                 // delay(15);
                 // packet++;
-                if(current_time < 1000)
-                    num_readings_last_second ++;
-                else{
-                    Serial.println("S,"+ String(time_now + millis()) +", Número de leituras no último segundo: " + String(num_readings_last_second));
-                    num_readings_last_second = 1;
-                    start_time = millis();
-                }
+                // if(current_time < 1000)
+                //     num_readings_last_second ++;
+                // else{
+                //     Serial.println("S,"+ String(time_now + millis()) +", Número de leituras no último segundo: " + String(num_readings_last_second));
+                //     num_readings_last_second = 1;
+                //     start_time = millis();
+                // }
                 xSemaphoreGive(dataSemaphore);
             }
         }
@@ -313,37 +252,17 @@ void TaskSendData( void * pvParameters ) {
 }
 
 
-// void TaskSendData(void *pvParameters) {
-//   Serial.print("Task SendData running on core ");
-//   Serial.println(xPortGetCoreID());
-
-//   sendDataTimer.attach_ms(3, sendDataCallback);  // Chama sendDataCallback a cada 3ms
-
-//   for (;;) {
-//     // Realize outras tarefas se necessário
-//     vTaskDelay(pdMS_TO_TICKS(1));  // Pequena pausa para liberar o processador
-//   }
-// }
-
 void TaskCollectData( void * pvParameters ) {
-  
-
   Serial.print("Task CollectData running on core ");
   Serial.println(xPortGetCoreID());
-  
-
   for (;;) {
     
     if (xSemaphoreTake(dataSemaphore, pdMS_TO_TICKS(0)) ) { //pdTRUEpdMS_TO_TICKS(0)
-            // Acesso exclusivo aos dados do MPU-9250 aqui
-            // Envie os dados via serial
+        // Acesso exclusivo aos dados do MPU-9250 aqui
+        // Envie os dados via serial
         mpu.update();
-        // if (){
-
-        // } 
         xSemaphoreGive(dataSemaphore);
     }
-    // vTaskDelay(pdMS_TO_TICKS(1));
 
   }
   
