@@ -227,8 +227,8 @@ void TaskSendData( void * pvParameters ) {
             
             if (xSemaphoreTake(dataSemaphore, 0) ) {
                 print_inertial_data();
-                // print_magnetometer_data();
-                // print_roll_pitch_yaw();
+                print_magnetometer_data();
+                print_roll_pitch_yaw();
                 // print_quaternions_data();
                 // blink LED to indicate activity
                 // blinkState = !blinkState;
