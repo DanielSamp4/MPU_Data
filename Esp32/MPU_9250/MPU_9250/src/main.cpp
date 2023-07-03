@@ -15,7 +15,7 @@ SemaphoreHandle_t dataSemaphore;
 void TaskSendData( void * pvParameters );
 void TaskCollectData( void * pvParameters );
 
-Ticker sendDataTimer;
+
 MPU9250 mpu;
 // BluetoothSerial SerialBT;
 void print_roll_pitch_yaw();
@@ -26,6 +26,7 @@ unsigned long time_now;
 unsigned long packet = 0;
 #define LED_PIN 2 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 bool blinkState = false;
+
 void setup() {
     Serial.begin(115200);
     // SerialBT.begin("Neuroprotese");
